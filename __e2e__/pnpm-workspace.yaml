@@ -1,0 +1,5 @@
+allowBuilds:
+  esbuild: true
+minimumReleaseAgeExclude:
+  - '@e2edev/web@0.11.0-canary-20260922135036'
+  - e2e@0.15.0-canary-20260922135036

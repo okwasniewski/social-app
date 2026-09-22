@@ -65,7 +65,7 @@ export async function createServer(
     inviteRequired: false,
   },
 ): Promise<TestPDS> {
-  const port = 3000
+  const port = Number(process.env.E2E_PDS_PORT ?? 3000)
   const port2 = await getPort(port + 1)
   const port3 = await getPort(port2 + 1)
   const pdsUrl = `http://localhost:${port}`
@@ -85,7 +85,10 @@ export async function createServer(
     plc: {port: port2},
   })
 
-  if (testNet.bsky.serverDid !== E2E_APPVIEW_DID) {
+  if (port !== 3000) {
+    // the AppView DID depends on the ports; tell the caller which one to hand the app
+    console.log('AppView DID', testNet.bsky.serverDid)
+  } else if (testNet.bsky.serverDid !== E2E_APPVIEW_DID) {
     await testNet.close()
     throw new Error(
       `E2E AppView DID changed from ${E2E_APPVIEW_DID} to ${testNet.bsky.serverDid}. Update E2E_APPVIEW_DID in dev-env/constants.ts.`,

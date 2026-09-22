@@ -53,6 +53,18 @@ module.exports = async function (env, argv) {
     ],
   }
   let config = await createExpoWebpackConfigAsync(env, argv)
+  if (process.env.EXPO_PUBLIC_ENV === 'e2e') {
+    // mirror metro.config.ts: e2e-only source overrides (e.g. TestCtrls.e2e.tsx) win on web too
+    // after the .web.* overrides so web-specific files (picker.web.tsx) still win
+    const exts = config.resolve.extensions || []
+    const firstGeneric = exts.findIndex(ext => !ext.startsWith('.web.'))
+    exts.splice(
+      firstGeneric === -1 ? exts.length : firstGeneric,
+      0,
+      '.e2e.tsx',
+      '.e2e.ts',
+    )
+  }
   /*
    * Expo only registers its own internal config as a cache build dependency,
    * so changes to this file (e.g. aliases) don't invalidate the persistent

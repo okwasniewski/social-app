@@ -46,6 +46,7 @@ import {Provider as OnboardingProvider} from '#/state/shell/onboarding'
 import {Provider as ProgressGuideProvider} from '#/state/shell/progress-guide'
 import {Provider as SelectedFeedProvider} from '#/state/shell/selected-feed'
 import {Provider as HiddenRepliesProvider} from '#/state/threadgate-hidden-replies'
+import {TestCtrls} from '#/view/com/testing/TestCtrls'
 import {Shell} from '#/view/shell/index'
 import {ThemeProvider as Alf} from '#/alf'
 import {useColorModeTheme} from '#/alf/util/useColorModeTheme'
@@ -156,6 +157,7 @@ function InnerApp() {
                                                             <IntentDialogProvider>
                                                               <TranslateOnDeviceProvider>
                                                                 <HotkeysProvider>
+                                                                  <TestCtrls />
                                                                   <Shell />
                                                                   <ToastOutlet />
                                                                 </HotkeysProvider>

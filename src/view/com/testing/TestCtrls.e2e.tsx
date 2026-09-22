@@ -18,7 +18,12 @@ LogBox.ignoreAllLogs()
 
 const BTN = {height: 1, width: 1, backgroundColor: 'red'}
 
-BLUESKY_PROXY_HEADER.set(`${E2E_APPVIEW_DID}#bsky_appview`)
+// a non-default mock PDS port (E2E_PDS_PORT) changes the AppView DID; both come from env then
+const E2E_PDS_URL =
+  process.env.EXPO_PUBLIC_E2E_PDS_URL ?? 'http://localhost:3000'
+const APPVIEW_DID = process.env.EXPO_PUBLIC_E2E_APPVIEW_DID ?? E2E_APPVIEW_DID
+
+BLUESKY_PROXY_HEADER.set(`${APPVIEW_DID}#bsky_appview`)
 
 export function TestCtrls() {
   const queryClient = useQueryClient()
@@ -29,7 +34,7 @@ export function TestCtrls() {
     console.info('[E2E] Signing in as Alice')
     await login(
       {
-        service: 'http://localhost:3000',
+        service: E2E_PDS_URL,
         identifier: 'alice.test',
         password: 'hunter2',
       },
@@ -41,7 +46,7 @@ export function TestCtrls() {
     console.info('[E2E] Signing in as Bob')
     await login(
       {
-        service: 'http://localhost:3000',
+        service: E2E_PDS_URL,
         identifier: 'bob.test',
         password: 'hunter2',
       },

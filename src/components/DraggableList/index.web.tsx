@@ -119,6 +119,7 @@ export function SortableList<T>({
 
         const dragHandle = (
           <div
+            data-testid="feed-drag-handle"
             onPointerDown={(e: React.PointerEvent<HTMLDivElement>) =>
               handlePointerDown(e, index)
             }

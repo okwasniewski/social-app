@@ -1,0 +1,23 @@
+{
+  "name": "bsky-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Agentic end-to-end suite for the Bluesky app, run with e2e",
+  "scripts": {
+    "test": "e2e run",
+    "test:headed": "e2e run --headed",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@e2edev/web": "0.11.0-canary-20260922135036",
+    "e2e": "0.15.0-canary-20260922135036"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.1",
+    "ai": "7.0.106",
+    "playwright": "1.63.0",
+    "typescript": "7.0.2",
+    "zod": "4.6.1"
+  }
+}

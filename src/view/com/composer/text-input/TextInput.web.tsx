@@ -170,6 +170,9 @@ export function TextInput({
       editorProps: {
         attributes: {
           class: modeClass,
+          role: 'textbox',
+          'aria-multiline': 'true',
+          'aria-label': placeholder,
         },
         clipboardTextParser: (text, context) => {
           const blocks = text.split(/(?:\r\n?|\n)/)
