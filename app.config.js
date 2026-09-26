@@ -281,7 +281,13 @@ module.exports = function (_config) {
             ios: {
               deploymentTarget: '16.4',
               buildReactNativeFromSource: true,
-              ccacheEnabled: IS_DEV,
+              /*
+               * The ccache wrapper resolves through REACT_NATIVE_PATH, which the
+               * extension targets do not get, so a local `expo run:ios` of the
+               * e2e build fails linking Share-with-Bluesky. E2E builds are
+               * one-off, ccache buys them nothing.
+               */
+              ccacheEnabled: IS_DEV && !IS_E2E,
               cxxLanguageStandard: 'c++23',
               extraPods: [
                 {

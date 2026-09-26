@@ -6,9 +6,9 @@ import {type Web} from '@e2edev/web'
  * The web picker (`expo-image-picker`) creates a hidden input and opens it by
  * dispatching a synthetic click, so both `click()` and `dispatchEvent(click)`
  * on a file input answer with a file and a change event.
- * Call it after `app.open`; it lives until the next full page load.
+ * Call it after `bsky.open`; it lives until the next full page load.
  */
-export async function stubFilePicker(web: Web): Promise<void> {
+export async function stubWebFilePicker(web: Web): Promise<void> {
   await web.evaluate(() => {
     // a member assignment, not a const: the runner's TypeScript loader wraps named
     // functions in a __name helper that does not exist inside the page

@@ -8,12 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@e2edev/mobile':
+        specifier: 0.8.0-canary-20260924194828
+        version: 0.8.0-canary-20260924194828(ai@7.0.106(zod@4.6.1))(e2e@0.15.0-canary-20260924194828(ai@7.0.106(zod@4.6.1)))
       '@e2edev/web':
-        specifier: 0.11.0-canary-20260922135036
-        version: 0.11.0-canary-20260922135036(e2e@0.15.0-canary-20260922135036(ai@7.0.106(zod@4.6.1)))(playwright@1.63.0)
+        specifier: 0.11.0-canary-20260924194828
+        version: 0.11.0-canary-20260924194828(e2e@0.15.0-canary-20260924194828(ai@7.0.106(zod@4.6.1)))(playwright@1.63.0)
       e2e:
-        specifier: 0.15.0-canary-20260922135036
-        version: 0.15.0-canary-20260922135036(ai@7.0.106(zod@4.6.1))
+        specifier: 0.15.0-canary-20260924194828
+        version: 0.15.0-canary-20260924194828(ai@7.0.106(zod@4.6.1))
     devDependencies:
       '@types/node':
         specifier: 26.6.1
@@ -49,19 +52,29 @@ packages:
     resolution: {integrity: sha512-VYMBxIQdcHqbIf1j+YZlI9Ati6LZ4wJe0GGd4z4a5H/KxTggjeOiyaVYTnfF7LHZK5jMQ+rofmzz4QPqf++NUw==}
     engines: {node: '>=22'}
 
-  '@clack/core@1.5.0':
-    resolution: {integrity: sha512-zNikCcd8BbcEvzzG1sbXFrRHFk5kHPrpwZwksPvf9qyQO1Teb7JaXaOAxXZei9nZLDW0gaZawiuTCji88bTBhw==}
+  '@clack/core@1.5.1':
+    resolution: {integrity: sha512-iHTrHA8MtVuLl2TfZySmcKv1qO2PoyC9Z7pfSDozEuV5vtY3/wcOPKJXlqJ5Oq2Cx5DDGQGAMVx6HZfRRoVEbQ==}
     engines: {node: '>= 20.12.0'}
 
-  '@clack/prompts@1.8.0':
-    resolution: {integrity: sha512-PXzLZ8N34rxmuo4dJg3xtOXhcBse94qGjDqsteoEYrFrrZ5FSjIGwMAuOcv64ln8rHVBBD06XeVGr+/JX+plcA==}
+  '@clack/prompts@1.8.1':
+    resolution: {integrity: sha512-dlT1m5e/0yUL0kRNcQn7yGLVThkgbB0Ga/1AmfDDC/8ik6AIiSf2QLQO2zPYvefsHP0aFgxO93cVLCCfDp7kzQ==}
     engines: {node: '>= 20.12.0'}
 
-  '@e2edev/web@0.11.0-canary-20260922135036':
-    resolution: {integrity: sha512-+nefdAXGl3QoGFOyditsCDMJ+10Zd6jGaXyUB0ZXusJer4EiRowjG/v/59KN7Lm/3sJNBbVmgv+AqlS6lvzDGw==}
+  '@e2edev/mobile@0.8.0-canary-20260924194828':
+    resolution: {integrity: sha512-TuBlU2t16TXl1UOoySoSySiWN6wXJx2GRPU0mf+2K//DXzkDLPbzmLdEvUylWSQ3R8BXLMUP/aZu/nZ3mUO3xA==}
     engines: {node: '>=22.12.0'}
     peerDependencies:
-      e2e: 0.15.0-canary-20260922135036
+      ai: ^7.0.0
+      e2e: 0.15.0-canary-20260924194828
+    peerDependenciesMeta:
+      ai:
+        optional: true
+
+  '@e2edev/web@0.11.0-canary-20260924194828':
+    resolution: {integrity: sha512-BZEbvQxL01wFVxH3cMVOEkJeGEt6kOW2ePYh+ns2OY0wsI6UdzLyP/oGuaDcD6/5enKFg6WszeAtazWBkDGxvw==}
+    engines: {node: '>=22.12.0'}
+    peerDependencies:
+      e2e: 0.15.0-canary-20260924194828
       playwright: '>=1.63.0 <2'
 
   '@esbuild/aix-ppc64@0.28.2':
@@ -391,6 +404,16 @@ packages:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
     engines: {node: '>= 0.6'}
 
+  agent-device@0.21.13:
+    resolution: {integrity: sha512-zXmkGbCr8aKFmnzlCJDeBIy2jHsMAzHCH9gcDfVg4+tY3gm43eO/fZ3/Y9+G7F4UOtSOW1b2ccei0i7cB5iDiA==}
+    engines: {node: '>=22.12'}
+    hasBin: true
+    peerDependencies:
+      ai: ^6.0.0 || ^7.0.0
+    peerDependenciesMeta:
+      ai:
+        optional: true
+
   ai@7.0.106:
     resolution: {integrity: sha512-0W9AlZfyhOlPyE9ZXCFisg0uxxrmQMGdoVUz0ewRg5J+xAhVBomSspktqYeGWABFbQrYyWRVibnvSf24pTeE2w==}
     engines: {node: '>=22'}
@@ -484,8 +507,8 @@ packages:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
     engines: {node: '>= 0.4'}
 
-  e2e@0.15.0-canary-20260922135036:
-    resolution: {integrity: sha512-f3IAT7ZVuLW//WxBX63mYzT6BRbaxMVQMtFjyr7NN4CqxQod4J4Z4aRT/WdkxbKwxue1yVAz78RC8F/c/rxQiA==}
+  e2e@0.15.0-canary-20260924194828:
+    resolution: {integrity: sha512-w31At/Aoy6w4AmSfKbmIUgjKhDDxU7T1gXpYO57W6Yw1+y+F0lSG2cIok0Dtu+HTSPf1tKn2pCoAr11bVUmXtQ==}
     engines: {node: '>=22.12.0'}
     hasBin: true
     peerDependencies:
@@ -799,8 +822,8 @@ packages:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
     engines: {node: '>=0.6'}
 
-  tsx@4.23.13:
-    resolution: {integrity: sha512-BL5MGkRln6aDYhb0xbQlEAGw743BaZYWdbWtdJOBriYJboKgUUYCadFp2/FpBBZquBC/ezNBn7wMMPx7FDZUDw==}
+  tsx@4.23.14:
+    resolution: {integrity: sha512-yFwMnbAsUFz/T3kR8P2ENc/DDUaYd9tKg4oVYo0lhkX0LlK4UuqYAO6mpQ2y6lmcyip1uPJ34C2kPACopDwG4w==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -866,21 +889,30 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@clack/core@1.5.0':
+  '@clack/core@1.5.1':
     dependencies:
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 
-  '@clack/prompts@1.8.0':
+  '@clack/prompts@1.8.1':
     dependencies:
-      '@clack/core': 1.5.0
+      '@clack/core': 1.5.1
       fast-string-width: 3.0.2
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 
-  '@e2edev/web@0.11.0-canary-20260922135036(e2e@0.15.0-canary-20260922135036(ai@7.0.106(zod@4.6.1)))(playwright@1.63.0)':
+  '@e2edev/mobile@0.8.0-canary-20260924194828(ai@7.0.106(zod@4.6.1))(e2e@0.15.0-canary-20260924194828(ai@7.0.106(zod@4.6.1)))':
     dependencies:
-      e2e: 0.15.0-canary-20260922135036(ai@7.0.106(zod@4.6.1))
+      agent-device: 0.21.13(ai@7.0.106(zod@4.6.1))
+      e2e: 0.15.0-canary-20260924194828(ai@7.0.106(zod@4.6.1))
+      pngjs: 7.0.0
+      zod: 4.6.1
+    optionalDependencies:
+      ai: 7.0.106(zod@4.6.1)
+
+  '@e2edev/web@0.11.0-canary-20260924194828(e2e@0.15.0-canary-20260924194828(ai@7.0.106(zod@4.6.1)))(playwright@1.63.0)':
+    dependencies:
+      e2e: 0.15.0-canary-20260924194828(ai@7.0.106(zod@4.6.1))
       playwright: 1.63.0
 
   '@esbuild/aix-ppc64@0.28.2':
@@ -1090,6 +1122,10 @@ snapshots:
       mime-types: 3.0.2
       negotiator: 1.1.0
 
+  agent-device@0.21.13(ai@7.0.106(zod@4.6.1)):
+    optionalDependencies:
+      ai: 7.0.106(zod@4.6.1)
+
   ai@7.0.106(zod@4.6.1):
     dependencies:
       '@ai-sdk/gateway': 4.0.86(zod@4.6.1)
@@ -1175,16 +1211,16 @@ snapshots:
       es-errors: 1.3.0
       gopd: 1.2.0
 
-  e2e@0.15.0-canary-20260922135036(ai@7.0.106(zod@4.6.1)):
+  e2e@0.15.0-canary-20260924194828(ai@7.0.106(zod@4.6.1)):
     dependencies:
       '@ai-sdk/provider': 4.0.17
-      '@clack/prompts': 1.8.0
+      '@clack/prompts': 1.8.1
       '@modelcontextprotocol/sdk': 1.30.0(zod@4.6.1)
       '@vitest/expect': 5.0.1
       commander: 15.0.0
       picocolors: 1.1.1
       pngjs: 7.0.0
-      tsx: 4.23.13
+      tsx: 4.23.14
       zod: 4.6.1
     optionalDependencies:
       ai: 7.0.106(zod@4.6.1)
@@ -1526,7 +1562,7 @@ snapshots:
 
   toidentifier@1.0.1: {}
 
-  tsx@4.23.13:
+  tsx@4.23.14:
     dependencies:
       esbuild: 0.28.2
     optionalDependencies:

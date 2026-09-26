@@ -1,33 +1,27 @@
 import {test, expect} from '../fixtures/bsky.ts'
-import {stubFilePicker} from '../fixtures/media.ts'
 
 test.describe('search and profiles', () => {
-  test.beforeEach(async ({mockServer, app, testControls}) => {
-    await mockServer.reset('users', 'posts', 'feeds')
-    await app.open('/')
-    await testControls.signIn('alice')
+  test.beforeEach(async ({bsky}) => {
+    await bsky.start('users', 'posts', 'feeds')
+    await bsky.signIn('alice')
   })
 
-  test('search autocomplete opens another profile', async ({
-    agent,
-    screen,
-    web,
-  }) => {
+  test('search autocomplete opens another profile', async ({agent, screen}) => {
     await agent.act(
       'open Search, type "b" into the search box and pick bob.test from the suggestions',
     )
-    await expect(web).toHaveURL('/profile/bob.test')
     await expect(screen.getByTestId('profileView')).toBeVisible()
-    await agent.assert("bob's profile is showing, with a Follow button")
+    await expect(screen.getByText(/@bob\.test/).first()).toBeVisible()
+    await expect(screen.getByTestId('followBtn')).toBeVisible()
   })
 
   test('follows, unfollows, mutes and unmutes another user', async ({
     agent,
     screen,
-    web,
   }) => {
     await agent.act("open bob.test's profile through Search")
-    await expect(web).toHaveURL('/profile/bob.test')
+    await expect(screen.getByTestId('profileView')).toBeVisible()
+    await expect(screen.getByText(/@bob\.test/).first()).toBeVisible()
 
     await agent.act('follow Bob, dismissing any prompt that appears afterwards')
     await expect(screen.getByTestId('unfollowBtn')).toBeVisible()
@@ -35,7 +29,6 @@ test.describe('search and profiles', () => {
     await expect(screen.getByTestId('followBtn')).toBeVisible()
 
     await agent.act('mute Bob\'s account from the profile\'s "..." menu')
-    await agent.assert('the profile says the account is muted')
     await expect(screen.getByText('Account Muted')).toBeVisible()
     await agent.act('unmute Bob\'s account from the profile\'s "..." menu')
     await expect(screen.getByText('Account Muted')).not.toBeAttached()
@@ -74,9 +67,9 @@ test.describe('search and profiles', () => {
   test('uploads and removes the avatar and banner', async ({
     agent,
     screen,
-    web,
+    bsky,
   }) => {
-    await stubFilePicker(web)
+    await bsky.stubFilePicker()
     await agent.act('open your own profile')
     await expect(screen.getByTestId('userBannerFallback')).toBeVisible()
 

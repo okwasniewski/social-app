@@ -1,4 +1,4 @@
-import {LogBox, Pressable, View} from 'react-native'
+import {LogBox, Platform, Pressable, View} from 'react-native'
 import {useQueryClient} from '@tanstack/react-query'
 
 import {E2E_APPVIEW_DID} from '../../../../dev-env/constants'
@@ -16,7 +16,15 @@ LogBox.ignoreAllLogs()
  * of the tests dramatically.
  */
 
-const BTN = {height: 1, width: 1, backgroundColor: 'red'}
+/*
+ * Web dispatches clicks on the elements, so 1px suffices there. A device tap
+ * lands on the element's centre in whole points; stacked 1px buttons then hit
+ * their neighbour, so native buttons get a few points each and a gap between.
+ */
+const BTN = Platform.select({
+  web: {height: 1, width: 1, backgroundColor: 'red'},
+  default: {height: 6, width: 6, marginBottom: 4, backgroundColor: 'red'},
+})
 
 // a non-default mock PDS port (E2E_PDS_PORT) changes the AppView DID; both come from env then
 const E2E_PDS_URL =
@@ -60,66 +68,77 @@ export function TestCtrls() {
         testID="e2eSignInAlice"
         onPress={onPressSignInAlice}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eSignInBob"
         onPress={onPressSignInBob}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eSignOut"
         onPress={() => logoutEveryAccount('Settings')}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eGotoHome"
         onPress={() => navigate('Home')}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eGotoSettings"
         onPress={() => navigate('Settings')}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eGotoModeration"
         onPress={() => navigate('Moderation')}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eGotoLists"
         onPress={() => navigate('Lists')}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eGotoFeeds"
         onPress={() => navigate('Feeds')}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="storybookBtn"
         onPress={() => navigate('Debug')}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eRefreshHome"
         onPress={() => queryClient.invalidateQueries({queryKey: ['post-feed']})}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
         testID="e2eOpenLoggedOutView"
         onPress={() => setShowLoggedOut(true)}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
       <Pressable
@@ -128,6 +147,7 @@ export function TestCtrls() {
           onboardingDispatch({type: 'start'})
         }}
         accessibilityRole="button"
+        accessibilityLabel="Test harness control, not part of the app"
         style={BTN}
       />
     </View>

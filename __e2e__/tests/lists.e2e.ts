@@ -1,11 +1,11 @@
 import {test, expect} from '../fixtures/bsky.ts'
+import {homeFeedTab} from '../fixtures/home.ts'
 
 test.describe('user lists', () => {
-  test.beforeEach(async ({mockServer, app, testControls}) => {
-    await mockServer.reset('users', 'follows', 'posts')
-    await app.open('/')
-    await testControls.signIn('alice')
-    await testControls.press('e2eGotoLists')
+  test.beforeEach(async ({bsky}) => {
+    await bsky.start('users', 'follows', 'posts')
+    await bsky.signIn('alice')
+    await bsky.press('e2eGotoLists')
   })
 
   test('creates, edits and deletes a list', async ({agent, screen}) => {
@@ -14,9 +14,6 @@ test.describe('user lists', () => {
       {
         params: {name: 'Good Ppl', description: 'They good'},
       },
-    )
-    await agent.assert(
-      'the list "Good Ppl" is open and shows its description "They good"',
     )
     await expect(screen.getByTestId('headerTitle')).toHaveText('Good Ppl')
     await expect(screen.getByText('They good').first()).toBeAttached()
@@ -36,7 +33,6 @@ test.describe('user lists', () => {
     await expect(screen.getByText('They bad')).not.toBeAttached()
 
     await agent.act('delete this list and confirm the deletion')
-    await agent.assert('the Lists page is showing')
     await expect(screen.getByTestId('newUserListBtn')).toBeVisible()
     await expect(screen.getByText('Bad Ppl')).not.toBeAttached()
   })
@@ -44,7 +40,7 @@ test.describe('user lists', () => {
   test('adds people to a list and pins it to home', async ({
     agent,
     screen,
-    testControls,
+    bsky,
   }) => {
     await agent.act(
       'create a new user list named {name} with the description {description}',
@@ -61,37 +57,32 @@ test.describe('user lists', () => {
     await agent.act('open the Posts tab of the list')
     await expect(
       screen
-        .getByTestId('listFeed')
+        .getByTestId('listFeed-flatlist')
         .getByTestId('feedItem-by-bob.test')
         .first(),
     ).toBeAttached()
 
     await agent.act('pin this list to home')
-    await testControls.press('e2eGotoHome')
+    await bsky.press('e2eGotoHome')
     await agent.act('open the "Good Ppl" tab of the home feed')
     await expect(
       screen
-        .getByTestId('customFeedPage-feed')
+        .getByTestId('customFeedPage-feed-flatlist')
         .getByTestId('feedItem-by-bob.test')
         .first(),
     ).toBeAttached()
-    await agent.assert(
-      'the "Good Ppl" feed tab is selected and shows a post by Bob',
-    )
 
-    await testControls.press('e2eGotoFeeds')
+    await bsky.press('e2eGotoFeeds')
     await agent.act('open the saved feed "Good Ppl"')
     await expect(
       screen
-        .getByTestId('listFeed')
+        .getByTestId('listFeed-flatlist')
         .getByTestId('feedItem-by-bob.test')
         .first(),
     ).toBeAttached()
     await agent.act('unpin this feed from home')
-    await testControls.press('e2eGotoHome')
-    await expect(
-      screen.getByTestId('homeScreenFeedTabs-Good Ppl'),
-    ).not.toBeAttached()
+    await bsky.press('e2eGotoHome')
+    await expect(homeFeedTab(screen, 'Good Ppl')).not.toBeAttached()
   })
 
   test('adds a user to a list from their profile', async ({agent, screen}) => {
@@ -120,11 +111,10 @@ test.describe('user lists', () => {
 })
 
 test.describe('moderation lists', () => {
-  test.beforeEach(async ({mockServer, app, testControls}) => {
-    await mockServer.reset('users', 'follows', 'labels')
-    await app.open('/')
-    await testControls.signIn('alice')
-    await testControls.press('e2eGotoModeration')
+  test.beforeEach(async ({bsky}) => {
+    await bsky.start('users', 'follows', 'labels')
+    await bsky.signIn('alice')
+    await bsky.press('e2eGotoModeration')
   })
 
   test('creates a moderation list and subscribes to it', async ({
@@ -141,7 +131,6 @@ test.describe('moderation lists', () => {
     await expect(screen.getByText('Shhh').first()).toBeAttached()
 
     await agent.act('subscribe to this list so it mutes the accounts on it')
-    await agent.assert('the list is subscribed as a mute list')
     await expect(screen.getByRole('button', {name: 'Unmute'})).toBeVisible()
     await agent.act('unmute the list')
 

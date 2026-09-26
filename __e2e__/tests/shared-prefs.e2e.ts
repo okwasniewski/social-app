@@ -4,11 +4,10 @@ test.describe(
   'shared preferences (native module)',
   {platforms: ['ios', 'android']},
   () => {
-    test.beforeEach(async ({mockServer, app, testControls}) => {
-      await mockServer.reset('users', 'posts', 'feeds')
-      await app.open('/')
-      await testControls.signIn('alice')
-      await testControls.press('storybookBtn')
+    test.beforeEach(async ({bsky}) => {
+      await bsky.start('users', 'posts', 'feeds')
+      await bsky.signIn('alice')
+      await bsky.press('storybookBtn')
     })
 
     test('stores strings, booleans, numbers and sets', async ({

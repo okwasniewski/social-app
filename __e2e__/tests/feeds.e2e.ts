@@ -1,20 +1,26 @@
-import {z} from 'zod'
 import type {Web} from '@e2edev/web'
 import type {Screen} from 'e2e'
 import {test, expect} from '../fixtures/bsky.ts'
+import {expectHomeTabs, homeFeedTab} from '../fixtures/home.ts'
 
 /**
  * Drags the saved-feed row at `from` onto the row at `to` through its grip
- * handle. The web list reorders on pointer events, which the agent has no
- * verb for, so this is the one deterministic gesture in the flow.
+ * handle. The list reorders on pointer events, which the agent has no verb
+ * for, so this is the one deterministic gesture in the flow. A device drag
+ * is a long press that moves; the web list wants a pointer path, so a
+ * browser gets a stepped mouse move.
  */
 async function dragFeed(
-  web: Web,
   screen: Screen,
   from: number,
   to: number,
+  web?: Web,
 ): Promise<void> {
   const handles = screen.getByTestId('feed-drag-handle')
+  if (web === undefined) {
+    await handles.nth(from).dragTo(handles.nth(to))
+    return
+  }
   const source = await handles.nth(from).boundingBox()
   const target = await handles.nth(to).boundingBox()
   if (!source || !target) throw new Error('drag handles are not on screen')
@@ -31,60 +37,44 @@ async function dragFeed(
 }
 
 test.describe('saved feeds', () => {
-  test.beforeEach(async ({mockServer, app, testControls}) => {
-    await mockServer.reset('users', 'follows', 'posts', 'feeds')
-    await app.open('/')
-    await testControls.signIn('alice')
+  test.beforeEach(async ({bsky}) => {
+    await bsky.start('users', 'follows', 'posts', 'feeds')
+    await bsky.signIn('alice')
   })
 
-  test('reorders and unpins home feeds', async ({
-    agent,
-    screen,
-    web,
-    testControls,
-  }) => {
-    const homeTabs = () =>
-      agent.extract(
-        'the names of the feed tabs at the top of the home screen, from left to right',
-        {
-          schema: z.array(z.string()),
-        },
-      )
-
+  test('reorders and unpins home feeds', async fixtures => {
+    const {agent, screen, bsky, platform} = fixtures
+    const web = platform === 'web' ? fixtures.web : undefined
     await agent.act(
-      'open alice\'s own profile, open its Feeds tab, open the "alice-favs" feed and pin it to home',
+      'open alice\'s own profile, open its Feeds tab, open the "alice-favs" feed and pin it to home; close any menu or sheet that is still open afterwards',
     )
-    await testControls.press('e2eGotoHome')
-    await expect(
-      screen.getByTestId('homeScreenFeedTabs-Feeds ✨'),
-    ).not.toBeAttached()
-    expect(await homeTabs()).toEqual(['Following', 'alice-favs'])
+    await bsky.press('e2eGotoHome')
+    await expect(homeFeedTab(screen, 'Feeds ✨')).not.toBeAttached()
+    await expectHomeTabs(screen, platform, ['Following', 'alice-favs'])
 
     await agent.act(
       'open Feeds and open the editor for your saved feeds ("Edit My Feeds")',
     )
     await expect(screen.getByTestId('feed-drag-handle')).toHaveCount(2)
-    await dragFeed(web, screen, 1, 0)
+    await dragFeed(screen, 1, 0, web)
     await agent.act('save the changes to your feeds')
-    await testControls.press('e2eGotoHome')
-    expect(await homeTabs()).toEqual(['alice-favs', 'Following'])
+    await bsky.press('e2eGotoHome')
+    await expectHomeTabs(screen, platform, ['alice-favs', 'Following'])
 
     await agent.act(
       'open Feeds and open the editor for your saved feeds ("Edit My Feeds")',
     )
     await expect(screen.getByTestId('feed-drag-handle')).toHaveCount(2)
-    await dragFeed(web, screen, 0, 1)
+    await dragFeed(screen, 0, 1, web)
     await agent.act('save the changes to your feeds')
-    await testControls.press('e2eGotoHome')
-    expect(await homeTabs()).toEqual(['Following', 'alice-favs'])
+    await bsky.press('e2eGotoHome')
+    await expectHomeTabs(screen, platform, ['Following', 'alice-favs'])
 
     await agent.act(
       'open Feeds, edit your saved feeds, unpin the "Following" feed and save the changes',
     )
-    await testControls.press('e2eGotoHome')
-    await expect(
-      screen.getByTestId('homeScreenFeedTabs-Following'),
-    ).not.toBeAttached()
-    expect(await homeTabs()).toEqual(['alice-favs'])
+    await bsky.press('e2eGotoHome')
+    await expect(homeFeedTab(screen, 'Following')).not.toBeAttached()
+    await expectHomeTabs(screen, platform, ['alice-favs'])
   })
 })

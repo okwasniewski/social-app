@@ -1,18 +1,41 @@
-import {createServer as createHTTPServer} from 'node:http'
+import {
+  createServer as createHTTPServer,
+  type IncomingMessage,
+  type ServerResponse,
+} from 'node:http'
 import {parse} from 'node:url'
 
 import {createServer, type TestPDS} from './test-pds.ts'
 
 let server: TestPDS
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-createHTTPServer(async (req, res) => {
-  const url = parse(req.url || '/', true)
+
+/** What `mocker.createPost` resolves to: the seeded posts replies and feeds refer back to. */
+type MockPost = Awaited<ReturnType<TestPDS['mocker']['createPost']>>
+/*
+ * Resets run one at a time. Two overlapping resets (a retried test attempt
+ * beside a fixture retry) tore down a network the other was still starting,
+ * left its ports bound, and moved every later network to other ports, which
+ * changes the AppView DID the app is built with.
+ */
+let resetting: Promise<void> = Promise.resolve()
+createHTTPServer((req, res) => {
   if (req.method !== 'POST') {
-    return res.writeHead(200).end()
+    res.writeHead(200).end()
+    return
   }
+  resetting = resetting.then(() => reset(req, res))
+}).listen(1986)
+
+async function reset(req: IncomingMessage, res: ServerResponse) {
+  const url = parse(req.url || '/', true)
   try {
     console.log('Closing old server')
-    await server?.close()
+    try {
+      await server?.close()
+    } catch (e) {
+      // a close that raced an earlier reset must not wedge every reset after it
+      console.warn('Old server was already closed', e)
+    }
     console.log('Starting new server')
     const inviteRequired = url?.query && 'invite' in url.query
     server = await createServer({inviteRequired})
@@ -97,8 +120,7 @@ createHTTPServer(async (req, res) => {
         await server.mocker.follow('alice', 'bob')
         await server.mocker.follow('alice', 'carla')
         console.log('Generating mock posts')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let posts: Record<string, any[]> = {
+        let posts: Record<string, MockPost[]> = {
           alice: [],
           bob: [],
           carla: [],
@@ -507,5 +529,5 @@ createHTTPServer(async (req, res) => {
     console.error('Error!', e)
     return res.writeHead(500).end()
   }
-}).listen(1986)
+}
 console.log('Mock server manager listening on 1986')

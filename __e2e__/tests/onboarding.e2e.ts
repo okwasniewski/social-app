@@ -1,13 +1,11 @@
 import {test, expect} from '../fixtures/bsky.ts'
-import {stubFilePicker} from '../fixtures/media.ts'
 
 test.describe('onboarding', () => {
-  test.beforeEach(async ({mockServer, app, testControls, web}) => {
-    await mockServer.reset('users')
-    await app.open('/')
-    await testControls.signIn('alice')
-    await stubFilePicker(web)
-    await testControls.press('e2eStartOnboarding')
+  test.beforeEach(async ({bsky}) => {
+    await bsky.start('users')
+    await bsky.signIn('alice')
+    await bsky.stubFilePicker()
+    await bsky.press('e2eStartOnboarding')
   })
 
   test('completes onboarding with an uploaded avatar', async ({
@@ -23,7 +21,6 @@ test.describe('onboarding', () => {
     await agent.act(
       'skip the suggested accounts step, continue through the remaining screens and press the button that finishes onboarding; the dialog may show "Finalizing" for a while afterwards, that is fine',
     )
-    await agent.act('close any "what\'s new" notice if one is shown')
     await expect(screen.getByTestId('homeScreenFeedTabs')).toBeVisible({
       timeout: 30_000,
     })
@@ -50,7 +47,6 @@ test.describe('onboarding', () => {
     await agent.act(
       'skip the suggested accounts step, continue through the remaining screens and press the button that finishes onboarding; the dialog may show "Finalizing" for a while afterwards, that is fine',
     )
-    await agent.act('close any "what\'s new" notice if one is shown')
     await expect(screen.getByTestId('homeScreenFeedTabs')).toBeVisible({
       timeout: 30_000,
     })

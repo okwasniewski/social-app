@@ -3,10 +3,9 @@ import {PDS_URL} from '../fixtures/env.ts'
 import {test, expect} from '../fixtures/bsky.ts'
 
 test.describe('signing in', () => {
-  test.beforeEach(async ({mockServer, app, testControls}) => {
-    await mockServer.reset('users')
-    await app.open('/')
-    await testControls.press('e2eOpenLoggedOutView')
+  test.beforeEach(async ({bsky}) => {
+    await bsky.start('users')
+    await bsky.press('e2eOpenLoggedOutView')
   })
 
   test('signs in against a custom hosting provider', async ({
@@ -23,9 +22,6 @@ test.describe('signing in', () => {
           password: alice.password,
         },
       },
-    )
-    await agent.act(
-      'dismiss any prompt about saving the password or notifications, if one is shown',
     )
     await expect(screen.getByTestId('homeScreenFeedTabs')).toBeVisible({
       timeout: 30_000,
@@ -52,9 +48,6 @@ test.describe('signing in', () => {
       {
         params: {handle: 'e2e-test'},
       },
-    )
-    await agent.assert(
-      'the sign-up asks to give the profile a face (an avatar step)',
     )
     await expect(screen.getByText('Give your profile a face')).toBeVisible()
   })

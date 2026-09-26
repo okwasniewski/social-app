@@ -1,27 +1,30 @@
 import {test, expect} from '../fixtures/bsky.ts'
 
-test.describe('reporting', () => {
-  test.beforeEach(async ({mockServer, app, testControls}) => {
-    await mockServer.reset('users', 'follows', 'posts', 'feeds')
-    await app.open('/')
-    await testControls.signIn('alice')
+/** Vocabulary for the report sheet on a phone, where the keyboard hides the footer. */
+const REPORT_HINT =
+  'On iOS and Android the report form is a bottom sheet. After typing into its details field the keyboard ' +
+  'covers the Submit button: scroll the sheet (swipe up inside it) until the button is clear of the keyboard, ' +
+  'then tap it.'
+
+test.describe('reporting', {agentContext: REPORT_HINT}, () => {
+  test.beforeEach(async ({bsky}) => {
+    await bsky.start('users', 'follows', 'posts', 'feeds')
+    await bsky.signIn('alice')
   })
 
   test('reports a post as spam', async ({agent, screen}) => {
     await agent.act(
       'report the first post in the Following feed: open its "..." menu and choose Report',
     )
-    await expect(
-      screen.getByRole('dialog', {name: 'Report dialog'}),
-    ).toBeVisible()
+    await expect(screen.getByTestId('report:dialog')).toBeVisible()
     await agent.act('choose the category "Misleading" and the reason "Spam"')
     await expect(
       screen.getByRole('button', {name: 'Send report to Dev-env Moderation'}),
     ).toBeVisible()
     await agent.act('send the report')
-    await expect(
-      screen.getByRole('dialog', {name: 'Report dialog'}),
-    ).not.toBeAttached({timeout: 20_000})
+    await expect(screen.getByTestId('report:dialog')).not.toBeAttached({
+      timeout: 20_000,
+    })
   })
 
   test('changes the reason before sending', async ({agent, screen}) => {
@@ -42,9 +45,9 @@ test.describe('reporting', () => {
     await agent.act(
       'choose the category "Misleading" and the reason "Spam", then send the report',
     )
-    await expect(
-      screen.getByRole('dialog', {name: 'Report dialog'}),
-    ).not.toBeAttached({timeout: 20_000})
+    await expect(screen.getByTestId('report:dialog')).not.toBeAttached({
+      timeout: 20_000,
+    })
   })
 
   test('sends a report with written details', async ({agent, screen}) => {
@@ -57,16 +60,17 @@ test.describe('reporting', () => {
         params: {details: 'This is a test report'},
       },
     )
-    await expect(
-      screen.getByRole('dialog', {name: 'Report dialog'}),
-    ).not.toBeAttached({timeout: 20_000})
+    await expect(screen.getByTestId('report:dialog')).not.toBeAttached({
+      timeout: 20_000,
+    })
   })
 
-  test('reports an account', async ({agent, screen, web}) => {
+  test('reports an account', async ({agent, screen}) => {
     await agent.act(
-      "open Carla's profile by clicking her avatar in the Following feed",
+      "open Carla's profile by tapping her avatar in the Following feed",
     )
-    await expect(web).toHaveURL('/profile/carla.test')
+    await expect(screen.getByTestId('profileView')).toBeVisible()
+    await expect(screen.getByText(/@carla\.test/).first()).toBeVisible()
     await agent.act(
       'open the report dialog for this account from the profile\'s "..." menu and choose the category "Misleading" and the reason "Spam", but do not send the report yet',
     )
@@ -74,8 +78,8 @@ test.describe('reporting', () => {
       screen.getByRole('button', {name: 'Send report to Dev-env Moderation'}),
     ).toBeVisible()
     await agent.act('send the report')
-    await expect(
-      screen.getByRole('dialog', {name: 'Report dialog'}),
-    ).not.toBeAttached({timeout: 20_000})
+    await expect(screen.getByTestId('report:dialog')).not.toBeAttached({
+      timeout: 20_000,
+    })
   })
 })

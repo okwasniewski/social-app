@@ -3,15 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Agentic end-to-end suite for the Bluesky app, run with e2e",
+  "description": "Agentic end-to-end suite for the Bluesky app (web, iOS, Android), run with e2e",
   "scripts": {
-    "test": "e2e run",
-    "test:headed": "e2e run --headed",
+    "test": "e2e run --target web",
+    "test:headed": "e2e run --target web --headed",
+    "test:ios": "e2e run --target ios",
+    "test:android": "e2e run --target android",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@e2edev/web": "0.11.0-canary-20260922135036",
-    "e2e": "0.15.0-canary-20260922135036"
+    "@e2edev/mobile": "0.8.0-canary-20260924194828",
+    "@e2edev/web": "0.11.0-canary-20260924194828",
+    "e2e": "0.15.0-canary-20260924194828"
   },
   "devDependencies": {
     "@types/node": "26.6.1",
